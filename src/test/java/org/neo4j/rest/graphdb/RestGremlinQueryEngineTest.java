@@ -42,10 +42,12 @@ public class RestGremlinQueryEngineTest extends RestTestBase {
     private RestAPI restAPI;
     private MatrixDataGraph embeddedMatrixdata;
     private MatrixDataGraph restMatrixData;
+    private long refNodeId;
     
     @Before
     public void init() throws Exception {
         embeddedMatrixdata = new MatrixDataGraph(getGraphDatabase()).createNodespace();
+        this.refNodeId = embeddedMatrixdata.getReferenceNodeId();
         restMatrixData = new MatrixDataGraph(getRestGraphDb());
         this.restAPI = ((RestGraphDatabase)getRestGraphDb()).getRestAPI();
         queryEngine = new RestGremlinQueryEngine(restAPI);      
@@ -56,8 +58,8 @@ public class RestGremlinQueryEngineTest extends RestTestBase {
     public void testGetReferenceNode(){
         final String queryString = "g.v(0)";
         final Node result = (Node) queryEngine.query(queryString, null).to(Node.class).single();
-        assertEquals(embeddedMatrixdata.getGraphDatabase().getReferenceNode(), result);
-
+        assertEquals( embeddedMatrixdata.getGraphDatabase()
+                .getNodeById( refNodeId ), result );
     }
     
     @Test

@@ -26,10 +26,7 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.graphdb.traversal.*;
 import org.neo4j.graphdb.traversal.Traverser;
-import org.neo4j.helpers.Predicate;
-import org.neo4j.kernel.Traversal;
 import org.neo4j.rest.graphdb.MatrixDataGraph.RelTypes;
-import org.neo4j.test.ImpermanentGraphDatabase;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
 import static org.junit.Assert.assertEquals;
@@ -46,11 +43,13 @@ public class MatrixDatabaseTest {
 	private static GraphDatabaseService graphDb;
 	private static MatrixDataGraph mdg;
     private Transaction tx;
+    private static long refNodeId;
 
     @BeforeClass
 	      public static void beforeClass() {
                 graphDb =  new TestGraphDatabaseFactory().newImpermanentDatabase();
                 mdg = new MatrixDataGraph(graphDb).createNodespace();
+                refNodeId = mdg.getReferenceNodeId();
 	      }
 
 	      @AfterClass
@@ -203,7 +202,7 @@ public class MatrixDatabaseTest {
                                return path.endNode().getProperty("type", "none").equals("hero") ? Evaluation.INCLUDE_AND_PRUNE : Evaluation.EXCLUDE_AND_CONTINUE;
                            }
                        });
-         	 return td.traverse(mdg.getGraphDatabase().getReferenceNode());
+         	 return td.traverse(mdg.getGraphDatabase().getNodeById( refNodeId ));
            }
            
            /**

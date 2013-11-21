@@ -24,7 +24,6 @@ import org.neo4j.rest.graphdb.RestAPI;
 import org.neo4j.rest.graphdb.UpdatableRestResult;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 

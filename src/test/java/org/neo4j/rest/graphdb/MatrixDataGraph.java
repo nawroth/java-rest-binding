@@ -48,6 +48,11 @@ public class MatrixDataGraph {
         }
     }
 
+    long getReferenceNodeId()
+    {
+        return refNodeId = -1;
+    }
+
     /** specify relationship types*/
 	 public enum RelTypes implements RelationshipType{
 	     NEO_NODE,
@@ -62,6 +67,7 @@ public class MatrixDataGraph {
 	 }	 
 	
 	 private GraphDatabaseService graphDb;
+    private long refNodeId;
 	 
 	 public MatrixDataGraph(GraphDatabaseService graphDb){
 		 this.graphDb = graphDb;		
@@ -76,7 +82,8 @@ public class MatrixDataGraph {
 	 public MatrixDataGraph createNodespace() {
 	      Transaction tx = this.graphDb.beginTx();
 	      try {
-	         Node referenceNode = this.graphDb.getReferenceNode();   
+            Node referenceNode = this.graphDb.createNode();
+            this.refNodeId = referenceNode.getId();
 	          
 	    	 //create the index for all characters that are considered good guys (sorry cypher) 
 	    	 IndexManager index = this.graphDb.index();
@@ -188,7 +195,8 @@ public class MatrixDataGraph {
 	  * @return the Neo node
 	  */
 	 public Node getNeoNode() {
-	      return this.graphDb.getReferenceNode().getSingleRelationship(
+        return this.graphDb.getNodeById( refNodeId )
+                .getSingleRelationship(
 	              RelTypes.NEO_NODE, Direction.OUTGOING ).getEndNode();
 	 }
       
@@ -198,7 +206,8 @@ public class MatrixDataGraph {
       * @return the Persons Collection node
       */
        public Node getPersonsCollectionNode() {
-           return this.graphDb.getReferenceNode().getSingleRelationship(
+        return this.graphDb.getNodeById( refNodeId )
+                .getSingleRelationship(
                    RelTypes.PERSONS_REFERENCE, Direction.OUTGOING ).getEndNode();
        }
         

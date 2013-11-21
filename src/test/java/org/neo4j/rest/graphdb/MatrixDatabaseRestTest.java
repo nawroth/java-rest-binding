@@ -41,11 +41,13 @@ public class MatrixDatabaseRestTest extends RestTestBase{
 	
 	 private MatrixDataGraph embeddedmdg;
 	 private MatrixDataGraph restmdg;
+    private long refNodeId;
 	
 	 @Before
      public void matrixTestSetUp() {
 		 	//fill server db with matrix nodes
 		 this.embeddedmdg = new MatrixDataGraph(getGraphDatabase()).createNodespace();
+        this.refNodeId = this.embeddedmdg.getReferenceNodeId();
 		 this.restmdg = new MatrixDataGraph(getRestGraphDb());
      }
 	 
@@ -183,7 +185,8 @@ public class MatrixDatabaseRestTest extends RestTestBase{
                .relationships( RelTypes.HEROES_REFERENCE, Direction.OUTGOING )
                .relationships( RelTypes.HERO, Direction.OUTGOING )                       
                .filter(ScriptLanguage.JAVASCRIPT, "position.length() == 3;"); 
-          return td.traverse(this.restmdg.getGraphDatabase().getReferenceNode());
+        return td.traverse( this.restmdg.getGraphDatabase()
+                .getNodeById( refNodeId ) );
       }
       
       /**
@@ -210,7 +213,8 @@ public class MatrixDatabaseRestTest extends RestTestBase{
                .relationships( RelTypes.HEROES_REFERENCE, Direction.OUTGOING )
                .relationships( RelTypes.HERO, Direction.OUTGOING )                          
                .filter(ScriptLanguage.JAVASCRIPT, "position.endNode().getProperty('type','none') == 'hero';");    	
-          return td.traverse(this.restmdg.getGraphDatabase().getReferenceNode());
+        return td.traverse( this.restmdg.getGraphDatabase()
+                .getNodeById( refNodeId ) );
       }
       
       
@@ -230,7 +234,7 @@ public class MatrixDatabaseRestTest extends RestTestBase{
                         return path.endNode().getProperty("type", "none").equals("hero") ? Evaluation.INCLUDE_AND_PRUNE : Evaluation.EXCLUDE_AND_CONTINUE;
                     }
                 });
-          return td.traverse(db.getReferenceNode());
+        return td.traverse( db.getNodeById( refNodeId ) );
       }
 
 	

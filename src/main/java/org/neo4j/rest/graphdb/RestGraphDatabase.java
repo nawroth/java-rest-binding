@@ -23,8 +23,8 @@ package org.neo4j.rest.graphdb;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.schema.Schema;
 import org.neo4j.graphdb.traversal.BidirectionalTraversalDescription;
-import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.impl.core.RelationshipTypeTokenHolder;
+import org.neo4j.kernel.impl.nioneo.store.StoreId;
 import org.neo4j.rest.graphdb.entity.RestNode;
 import org.neo4j.rest.graphdb.index.RestIndexManager;
 import org.neo4j.rest.graphdb.query.RestCypherQueryEngine;
@@ -34,6 +34,7 @@ import org.neo4j.rest.graphdb.util.ResourceIterableWrapper;
 import org.neo4j.rest.graphdb.util.ResultConverter;
 
 import javax.transaction.TransactionManager;
+
 import java.util.Map;
 
 
@@ -98,12 +99,10 @@ public class RestGraphDatabase extends AbstractRemoteDatabase {
         return restAPI.getBaseUri();
     }
 
-    @Override
     public TransactionManager getTxManager() {
         return new BatchTransactionManager(restAPI); //new NullTransactionManager();
     }
 
-    @Override
     public RelationshipTypeTokenHolder getRelationshipTypeTokenHolder() {
         return null;
     }
@@ -149,6 +148,18 @@ public class RestGraphDatabase extends AbstractRemoteDatabase {
 
     @Override
     public BidirectionalTraversalDescription bidirectionalTraversalDescription() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public StoreId storeId()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isAvailable( long timeout )
+    {
         throw new UnsupportedOperationException();
     }
 }

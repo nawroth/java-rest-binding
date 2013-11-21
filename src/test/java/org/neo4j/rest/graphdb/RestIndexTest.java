@@ -44,27 +44,29 @@ public class RestIndexTest extends RestTestBase {
 
     @Test
     public void testAddToNodeIndex() {
-        nodeIndex().add(node(), "name", "test");
+        Node node = this.getRestGraphDb().createNode();
+        nodeIndex().add( node, "name", "test" );
         IndexHits<Node> hits = nodeIndex().get("name", "test");
         Assert.assertEquals("index results", true, hits.hasNext());
-        Assert.assertEquals(node(), hits.next());
+        Assert.assertEquals( node, hits.next() );
     }
 
     @Test
     public void testUseCriticalCharactersInKeyAndValue() {
-        nodeIndex().add(node(), "na#me", "te?t");
+        Node node = this.getRestGraphDb().createNode();
+        nodeIndex().add(node, "na#me", "te?t");
         IndexHits<Node> hits = nodeIndex().get("na#me", "te?t");
         Assert.assertEquals("index results", true, hits.hasNext());
-        Assert.assertEquals(node(), hits.next());
+        Assert.assertEquals(node, hits.next());
     }
 
     @Test
     public void testPutNodeIfAbsentIndex() {
-        final Node node = nodeIndex().putIfAbsent(node(), "name", "test");
-        Assert.assertEquals(node(), node);
-        IndexHits<Node> hits = nodeIndex().get("name", "test");
-        Assert.assertEquals("index results", true, hits.hasNext());
-        Assert.assertEquals(node(), hits.next());
+        final Node node = nodeIndex().putIfAbsent( node(), "name", "test" );
+        Assert.assertEquals( node(), node );
+        IndexHits<Node> hits = nodeIndex().get( "name", "test" );
+        Assert.assertEquals( "index results", true, hits.hasNext() );
+        Assert.assertEquals( node(), hits.next() );
     }
     @Test
     public void testPutNodeIfAbsentWithExistingNodeIndex() {

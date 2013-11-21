@@ -27,11 +27,12 @@ import java.util.Map;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.traversal.TraversalMetadata;
 import org.neo4j.graphdb.traversal.Traverser;
-import org.neo4j.helpers.collection.IterableWrapper;
-
 import org.neo4j.rest.graphdb.RestAPI;
+import org.neo4j.rest.graphdb.util.ResourceIterableWrapper;
 
 /**
  * @author Michael Hunger
@@ -52,8 +53,10 @@ public class RestTraverser implements Traverser {
         return result;
     }
 
-    public Iterable<Node> nodes() {
-        return new IterableWrapper<Node, Path>(paths) {
+    public ResourceIterable<Node> nodes()
+    {
+        return new ResourceIterableWrapper<Node, Path>( paths )
+        {
             @Override
             protected Node underlyingObjectToObject(Path path) {
                 return path.endNode();
@@ -61,8 +64,10 @@ public class RestTraverser implements Traverser {
         };
     }
 
-    public Iterable<Relationship> relationships() {
-        return new IterableWrapper<Relationship, Path>(paths) {
+    public ResourceIterable<Relationship> relationships()
+    {
+        return new ResourceIterableWrapper<Relationship, Path>( paths )
+        {
             @Override
             protected Relationship underlyingObjectToObject(Path path) {
                 return path.lastRelationship();
@@ -70,12 +75,70 @@ public class RestTraverser implements Traverser {
         };
     }
 
-    public Iterator<Path> iterator() {
-        return paths.iterator();
+    public ResourceIterator<Path> iterator()
+    {
+        return new WrappingResourceIterator<Path>( paths.iterator() );
     }
 
     @Override
     public TraversalMetadata metadata() {
         throw new UnsupportedOperationException();
     }
+
+    // copy-pasted from org.neo4j.helpers.collection
+    class WrappingResourceIterator<T> implements ResourceIterator<T>
+    {
+        private final Iterator<T> iterator;
+        boolean hasNext;
+
+        public WrappingResourceIterator( Iterator<T> iterator )
+        {
+            this.iterator = iterator;
+            hasNext = iterator.hasNext();
+        }
+
+        @Override
+        public void close()
+        {
+            hasNext = false;
+        }
+
+        @Override
+        public boolean hasNext()
+        {
+            return hasNext;
+        }
+
+        @Override
+        public T next()
+        {
+            assertHasNext();
+            T result = iterator.next();
+            hasNext = iterator.hasNext();
+            return result;
+        }
+
+        @Override
+        public void remove()
+        {
+            assertHasNext();
+            try
+            {
+                iterator.remove();
+            }
+            finally
+            {
+                hasNext = iterator.hasNext();
+            }
+        }
+
+        private void assertHasNext()
+        {
+            if ( !hasNext )
+            {
+                throw new IllegalArgumentException( "Iterator already closed" );
+            }
+        }
+    }
+
 }

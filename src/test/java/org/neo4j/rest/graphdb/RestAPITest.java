@@ -19,7 +19,6 @@
  */
 package org.neo4j.rest.graphdb;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 import static org.neo4j.helpers.collection.MapUtil.map;
 
@@ -73,16 +72,18 @@ public class RestAPITest extends RestTestBase {
 
     @Test
     public void testGetSingleRelationshipShouldReturnNullIfThereIsNone() throws Exception {
-        assertNull(getRestGraphDb().getReferenceNode().getSingleRelationship(DynamicRelationshipType.withName("foo"),Direction.OUTGOING));
+        assertNull( getRestGraphDb().createNode()
+                .getSingleRelationship( DynamicRelationshipType.withName( "foo" ), Direction.OUTGOING ) );
     }
     @Test
     public void testHasSingleRelationshipShouldReturnFalseIfThereIsNone() throws Exception {
-        assertEquals(false,getRestGraphDb().getReferenceNode().hasRelationship(DynamicRelationshipType.withName("foo"),Direction.OUTGOING));
+        assertEquals( false, getRestGraphDb().createNode()
+                .hasRelationship( DynamicRelationshipType.withName( "foo" ), Direction.OUTGOING ) );
     }
 
 	@Test
     public void testCreateRelationshipWithParams() {
-        Node refNode = getRestGraphDb().getReferenceNode();
+        Node refNode = getRestGraphDb().createNode();
         Node node = getRestGraphDb().createNode();
         Map<String, Object> props = new HashMap<String, Object>();
 		props.put("name", "test");
@@ -184,7 +185,7 @@ public class RestAPITest extends RestTestBase {
 	
 	@Test
 	public void testCreateRestAPIIndexForRelationship(){
-		Node refNode = getRestGraphDb().getReferenceNode();
+        Node refNode = getRestGraphDb().createNode();
 	    Node node = getRestGraphDb().createNode();
 	    Map<String, Object> props = new HashMap<String, Object>();
 		props.put("name", "test");

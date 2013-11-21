@@ -27,8 +27,6 @@ import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.*;
 
-import java.net.URISyntaxException;
-
 import static org.junit.Assert.*;
 
 public class RestAutoIndexTest extends RestTestBase {

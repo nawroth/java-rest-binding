@@ -31,7 +31,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-import java.net.URISyntaxException;
 import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
@@ -102,8 +101,14 @@ public class RestTestBase {
         return node().createRelationshipTo(restGraphDb.createNode(), Type.TEST);
     }
 
+    private Node refNode = null;
+
     protected Node node() {
-        return restGraphDb.getReferenceNode();
+        if ( refNode == null )
+        {
+            refNode = restGraphDb.createNode();
+        }
+        return refNode;
     }
     
     protected GraphDatabaseService getGraphDatabase() {

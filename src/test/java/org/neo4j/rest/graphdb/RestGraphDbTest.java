@@ -36,13 +36,6 @@ import static org.junit.matchers.JUnitMatchers.hasItems;
 public class RestGraphDbTest extends RestTestBase {
 
     @Test
-    public void testGetRefNode() {
-        Node refNode = getRestGraphDb().getReferenceNode();
-        Node nodeById = getRestGraphDb().getNodeById( 0 );
-        Assert.assertEquals( refNode, nodeById );
-    }
-
-    @Test
     public void testCreateNode() {
         Node node = getRestGraphDb().createNode();
         Assert.assertEquals( node, getRestGraphDb().getNodeById( node.getId() ) );
@@ -50,7 +43,7 @@ public class RestGraphDbTest extends RestTestBase {
 
     @Test
     public void testCreateRelationship() {
-        Node refNode = getRestGraphDb().getReferenceNode();
+        Node refNode = getRestGraphDb().createNode();
         Node node = getRestGraphDb().createNode();
         Relationship rel = refNode.createRelationshipTo( node, Type.TEST );
         Relationship foundRelationship = TestHelper.firstRelationshipBetween( refNode.getRelationships( Type.TEST, Direction.OUTGOING ), refNode, node );
@@ -65,7 +58,7 @@ public class RestGraphDbTest extends RestTestBase {
     @Test
     public void testBasic() {
         final GraphDatabaseService gdb = getRestGraphDb();
-        Node refNode = gdb.getReferenceNode();
+        Node refNode = gdb.createNode();
         Node node = gdb.createNode();
         final RelationshipType TEST = DynamicRelationshipType.withName("TEST");
         Relationship rel = refNode.createRelationshipTo( node,

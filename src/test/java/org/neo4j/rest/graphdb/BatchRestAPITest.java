@@ -20,7 +20,6 @@
 package org.neo4j.rest.graphdb;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.neo4j.helpers.collection.MapUtil.map;
 
 import org.junit.Assert;
@@ -101,7 +100,7 @@ public class BatchRestAPITest extends RestTestBase {
         leaked.createNode(map());
         Transaction transaction = getGraphDatabase().beginTx();
         try {
-            assertEquals(2, countExistingNodes());
+            assertEquals( 1, countExistingNodes() );
         } finally {
             transaction.success();transaction.close();
         }
